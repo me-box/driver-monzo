@@ -65,10 +65,10 @@ app.get('/oauth/callback', (req, res) => {
             .then(() => {
                 // refresh token on every 30 minutes
                 refresh_token_timer = setInterval(refresh_token, 1000 * 60 * 30);
-            }
+            })
             .then(() => {
                 res.redirect('/configure');
-            };
+            });
         });
     });
 });
@@ -104,7 +104,7 @@ app.get('/configure', (req, res) => {
             res.write('<button>Save Configuration</button>');
             res.end('</form>');
         });
-    };
+    });
 });
 
 // Step 4: Parse response and save configuration
@@ -128,7 +128,7 @@ app.get('/saveConfiguration', function (req, res) {
         // Clear timer if still active
         if (refresh_data_timer != null) {
             clearInterval(refresh_data_timer);
-            refresh_data_timer = null
+            refresh_data_timer = null;
         }
 
         // refresh data every X minutes (taken from settings)
@@ -196,17 +196,17 @@ function getSettings() {
             if (Object.keys(settings).length === 0) {
                 //return defaults
                 let settings = MonzoDefaultSettings;
-                settings.redirect_uri = "http://localhost:3000/oauth/callback"
+                settings.redirect_uri = "http://localhost:3000/oauth/callback";
                 console.log("[getSettings] using defaults Using ----> ", settings);
                 resolve(settings);
-                return
+                return;
             }
             console.log("[getSettings]", settings);
             resolve(settings);
         })
         .catch((err) => {
             let settings = MonzoDefaultSettings;
-            settings.redirect_uri = "http://localhost:3000/oauth/callback"
+            settings.redirect_uri = "http://localhost:3000/oauth/callback";
             console.log("[getSettings] using defaults Using ----> ", settings);
             resolve(settings);
         });
@@ -281,8 +281,8 @@ function refresh_balance() {
         }, (req, response, body) => {
             const { balance } = JSON.parse(body);
             save('monzoUserBalance', transactions);
-        }
-    };
+        });
+    });
 }
 
 function refresh_transactions() {
@@ -298,7 +298,6 @@ function refresh_transactions() {
         }, (req, response, body) => {
             const { transactions } = JSON.parse(body);
             save('monzoUserTransactions', transactions);
-        }
-    };
+        });
+    });
 }
-
