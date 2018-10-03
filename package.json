@@ -1,0 +1,51 @@
+{
+  "name": "driver-monzo",
+  "version": "1.0.0",
+  "description": "A Databox driver to stream data from monzo bank",
+  "config": {
+    "registry": "localhost:5000"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha",
+    "start": "node ./src/main.js",
+    "build": "docker build -t databox/driver-monzo .",
+    "deploy": "docker tag databox/driver-monzo $npm_package_config_registry/driver-monzo && docker push $npm_package_config_registry/driver-monzo",
+    "build-arm": "docker build -f Dockerfile-arm -t databox/driver-monzo-arm .",
+    "deploy-arm": "docker tag databox/driver-monzo-arm $npm_package_config_registry/driver-monzo-arm && docker push $npm_package_config_registry/driver-monzo-arm",
+    "clean": "node ./node_modules/modclean/bin/modclean.js -p ./node_modules/ -r",
+    "getshell": "docker exec -i -t driver-monzo /bin/bash",
+    "kill": "docker kill driver-monzo",
+    "attach": "docker attach driver-monzo",
+    "shell": "docker run -i -t databox/driver-monzo /bin/bash",
+    "local": "docker run -i -t databox/driver-monzo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minoskt/driver-monzo.git"
+  },
+  "keywords": [
+    "Databox",
+    "monzo",
+    "stream"
+  ],
+  "author": "Kleomenis Katevas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/minoskt/driver-monzo/issues"
+  },
+  "homepage": "https://github.com/minoskt/driver-monzo#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "modclean": "^2.1.2",
+    "node-databox": "^0.8.1",
+    "oauth": "^0.9.15",
+    "pug": "^2.0.3",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "mocha": "^5.2.0",
+    "supertest": "^3.1.0"
+  }
+}
