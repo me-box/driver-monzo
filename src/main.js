@@ -18,8 +18,9 @@ const app = express();
 
 app.use(bodyParser.urlencoded({extended: true}));
 
-let refresh_data_timer = null;
-let refresh_token_timer = null;
+let timer = setInterval(timer_callback, 1000 * 60);  // per minute
+let next_token_refresh = null;
+let next_data_refresh = null;
 
 // Step 1: Auth with Monzo
 app.get('/ui', function (req, res) {
@@ -62,10 +63,6 @@ app.get('/oauth/callback', (req, res) => {
         }, (err, response, body) => {
             settings.auth_details = JSON.parse(body);
             setSettings(settings)
-            .then(() => {
-                // refresh token on every 30 minutes
-                refresh_token_timer = setInterval(refresh_token, 1000 * 60 * 30);
-            })
             .then(() => {
                 res.redirect('/configure');
             });
@@ -124,16 +121,6 @@ app.get('/saveConfiguration', function (req, res) {
     .then((settings) => {
         // Start/Restart monitoring with new settings
         refresh_data();
-
-        // Clear timer if still active
-        if (refresh_data_timer != null) {
-            clearInterval(refresh_data_timer);
-            refresh_data_timer = null;
-        }
-
-        // refresh data every X minutes (taken from settings)
-        refresh_data_timer = setInterval(refresh_data, 1000 * 60 * settings.refresh_interval);
-
     })
     .catch((error) => {
         console.log("[saveConfiguration] Error ", error);
@@ -263,9 +250,33 @@ function refresh_token() {
     });
 }
 
-function refresh_data() {
-    refresh_balance();
-    refresh_transactions();
+function timer_callback() {
+
+    getSettings()
+    .then((settings) => {
+        const {refresh_interval} = settings.refresh_interval;
+
+        // current datetime
+        var now = newDate();
+
+        if (next_token_refresh == null ||
+            next_token_refresh < now) {
+
+            refresh_token();
+
+            // plan next refresh
+            next_token_refresh = Date().setMinutes(now.getMinutes() + 60); // 1 hour
+        }
+
+        if (next_data_refresh == null ||
+            next_data_refresh < now) {
+            refresh_balance();
+            refresh_transactions();
+
+            // plan next refresh
+            next_data_refresh = Date().setMinutes(now.getMinutes() + refresh_interval);
+        }
+    });
 }
 
 function refresh_balance() {
