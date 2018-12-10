@@ -19,8 +19,6 @@
 		"type": "git",
 		"url": "git+https://github.com/me-box/driver-monzo.git"
 	},
-	"network-permissions": [
-	],
 	"external-whitelist": [
 		{
 			"urls": [
@@ -29,9 +27,21 @@
 			"description": "Access monzo API"
 		}
 	],
-	"hardware-permissions": [
-	],
 	"resource-requirements": {
 		"store": "core-store"
-	}
+	},
+	"provides": [
+		{
+			"data-source-type": "monzoUserBalance",
+			"description": "Monzo Bank user Balance data",
+			"store-type": "tsblob",
+			"schema": {}
+		},
+		{
+			"data-source-type": "monzoUserTransactions",
+			"description": "Monzo Bank user Transactions data",
+			"store-type": "tsblob",
+			"schema": {}
+		}
+	]
 }
